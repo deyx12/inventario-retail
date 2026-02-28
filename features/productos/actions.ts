@@ -20,7 +20,10 @@ export async function obtenerProductos(busqueda?: string) {
 
   const { data, error } = await query;
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("obtenerProductos error:", error.message);
+    return [];
+  }
   return data;
 }
 
@@ -32,7 +35,10 @@ export async function obtenerProductoPorId(id: string) {
     .eq("id", id)
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("obtenerProductoPorId error:", error.message);
+    return null;
+  }
   return data;
 }
 
@@ -44,7 +50,10 @@ export async function obtenerProductoPorCodigoBarras(codigo: string) {
     .eq("codigo_barras", codigo)
     .maybeSingle();
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("obtenerProductoPorCodigoBarras error:", error.message);
+    return null;
+  }
   return data;
 }
 
@@ -139,7 +148,10 @@ export async function obtenerCategorias() {
     .select("*")
     .order("nombre");
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("obtenerCategorias error:", error.message);
+    return [];
+  }
   return data;
 }
 
@@ -180,7 +192,10 @@ export async function obtenerAlmacenes() {
     .select("*")
     .order("nombre");
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("obtenerAlmacenes error:", error.message);
+    return [];
+  }
   return data;
 }
 

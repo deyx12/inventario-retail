@@ -58,7 +58,10 @@ export async function getProductosStockBajo() {
     .select("cantidad, productos(id, nombre, sku, stock_minimo, precio_venta), almacenes(nombre)")
     .order("cantidad", { ascending: true });
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("getProductosStockBajo error:", error.message);
+    return [];
+  }
 
   // Filter for low stock
   return (data || []).filter((item) => {

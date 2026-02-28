@@ -18,11 +18,11 @@ interface ProductoFormProps {
 
 export default function ProductoForm({ producto, categorias, onSubmit, onSuccess }: ProductoFormProps) {
   const [loading, setLoading] = useState(false);
-  const [categoriaId, setCategoriaId] = useState(producto?.categoria_id || "");
+  const [categoriaId, setCategoriaId] = useState(producto?.categoria_id || "none");
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
-    formData.set("categoria_id", categoriaId);
+    formData.set("categoria_id", categoriaId === "none" ? "" : categoriaId);
     const result = await onSubmit(formData);
     setLoading(false);
 
@@ -74,7 +74,7 @@ export default function ProductoForm({ producto, categorias, onSubmit, onSuccess
             <SelectValue placeholder="Sin categoría" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sin categoría</SelectItem>
+            <SelectItem value="none">Sin categoría</SelectItem>
             {categorias.map((cat) => (
               <SelectItem key={cat.id} value={cat.id}>{cat.nombre}</SelectItem>
             ))}

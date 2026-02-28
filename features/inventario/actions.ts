@@ -51,7 +51,10 @@ export async function obtenerInventario() {
     .select("*, productos(nombre, sku, stock_minimo), almacenes(nombre)")
     .order("updated_at", { ascending: false });
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("obtenerInventario error:", error.message);
+    return [];
+  }
   return data;
 }
 
@@ -79,6 +82,9 @@ export async function obtenerMovimientos(filtros?: {
   }
 
   const { data, error } = await query;
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("obtenerMovimientos error:", error.message);
+    return [];
+  }
   return data;
 }
