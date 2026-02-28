@@ -1,5 +1,1 @@
-import { redirect } from "next/navigation";
-
-export default function RouteGroupRoot() {
-  redirect("/dashboard");
-}
+export { default } from "./dashboard/page";
