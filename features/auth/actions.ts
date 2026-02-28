@@ -39,6 +39,7 @@ export async function signUp(formData: FormData) {
 
   const supabase = await createClient();
 
+  // 1. Create auth user (trigger may or may not create profile)
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
@@ -51,31 +52,20 @@ export async function signUp(formData: FormData) {
 
   if (signUpError) {
     console.error("SignUp error:", signUpError.message, signUpError.status);
-    if (signUpError.message.includes("Database error")) {
-      return { error: "Error de base de datos. Verifica que las tablas estén creadas en Supabase." };
-    }
     return { error: signUpError.message };
   }
 
-  // Update profile with store name (trigger creates profile, we just add nombre_tienda)
+  // 2. Ensure profile exists (don't rely solely on trigger)
   const userId = signUpData.user?.id;
   if (userId) {
-    const { error: updateError } = await supabase
-      .from("perfiles")
-      .update({ nombre_tienda: parsed.data.nombre_tienda })
-      .eq("id", userId);
-
-    // If update fails (profile not created by trigger yet), try upsert
-    if (updateError) {
-      console.error("Profile update error:", updateError.message);
-      await supabase
-        .from("perfiles")
-        .upsert({
-          id: userId,
-          email: parsed.data.email,
-          nombre_tienda: parsed.data.nombre_tienda,
-        });
-    }
+    await supabase.from("perfiles").upsert(
+      {
+        id: userId,
+        email: parsed.data.email,
+        nombre_tienda: parsed.data.nombre_tienda,
+      },
+      { onConflict: "id" }
+    );
   }
 
   redirect("/");
